@@ -40,6 +40,8 @@ const CSP: &str = "default-src 'none'; style-src 'self'; script-src 'self'; \
      img-src * data:; media-src *; form-action 'self'; base-uri 'none'; \
      frame-ancestors 'none'";
 
+const HSTS: &str = "max-age=31536000; includeSubDomains";
+
 pub fn build_router(state: AppState) -> Router {
     Router::new()
         .route("/health", get(health))
@@ -78,6 +80,14 @@ pub fn build_router(state: AppState) -> Router {
         .layer(SetResponseHeaderLayer::overriding(
             header::REFERRER_POLICY,
             HeaderValue::from_static("no-referrer"),
+        ))
+        .layer(SetResponseHeaderLayer::overriding(
+            header::STRICT_TRANSPORT_SECURITY,
+            HeaderValue::from_static(HSTS),
+        ))
+        .layer(SetResponseHeaderLayer::overriding(
+            header::X_FRAME_OPTIONS,
+            HeaderValue::from_static("DENY"),
         ))
         .layer(TimeoutLayer::with_status_code(
             StatusCode::REQUEST_TIMEOUT,
