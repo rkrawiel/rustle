@@ -51,6 +51,11 @@ pub static ASSETS: LazyLock<Vec<Asset>> = LazyLock::new(|| {
             "text/javascript; charset=utf-8",
             include_str!("../assets/app.js"),
         ),
+        (
+            "favicon.svg",
+            "image/svg+xml",
+            include_str!("../assets/favicon.svg"),
+        ),
     ]
     .into_iter()
     .map(|(name, content_type, source)| {
@@ -121,6 +126,11 @@ pub fn scripts() -> Vec<String> {
         .filter(|asset| asset.name.ends_with(".js"))
         .map(Asset::path)
         .collect()
+}
+
+/// The favicon path, linked on every page regardless of sign-in state.
+pub fn favicon() -> String {
+    get("favicon.svg").expect("favicon.svg is a built-in asset").path()
 }
 
 /// The brief's page-weight budgets, in uncompressed served bytes.

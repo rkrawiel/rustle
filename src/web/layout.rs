@@ -19,6 +19,7 @@ pub struct Layout {
     /// Goes in `<title>`, before the product name.
     pub title: String,
     pub theme: Theme,
+    pub favicon: String,
     pub stylesheets: Vec<String>,
     /// Linked only when signed in — `base.html` has nothing for them to act on before
     /// that, same as the keyboard shortcuts they implement.
@@ -40,6 +41,7 @@ impl Layout {
         Self {
             title: title.into(),
             theme: Theme::System,
+            favicon: assets::favicon(),
             stylesheets: assets::stylesheets(),
             scripts: Vec::new(),
             csrf_token: String::new(),
@@ -60,6 +62,7 @@ impl Layout {
         Ok(Self {
             title: title.into(),
             theme: current.user.theme,
+            favicon: assets::favicon(),
             stylesheets: assets::stylesheets(),
             scripts: assets::scripts(),
             csrf_token: current.session.csrf_token.clone(),
