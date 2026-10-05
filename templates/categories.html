@@ -1,0 +1,64 @@
+{% extends "base.html" %} {% import "macros.html" as m %} {% block main %}
+<h1 class="page-title">Categories</h1>
+<hr class="rule" />
+
+<form class="search" method="post" action="/categories">
+  {% call m::csrf(layout.csrf_token) %}{% endcall %}
+  <label class="skip" for="new-category">New category name</label>
+  <input id="new-category" name="title" type="text" required placeholder="New category" />
+  <button type="submit">Add</button>
+</form>
+
+{% if categories.is_empty() %}
+<div class="prose flow">
+  <p class="lede">No categories yet.</p>
+  <p>
+    Every feed belongs to exactly one category. Subscribing without picking one puts the feed
+    in “Uncategorized”.
+  </p>
+</div>
+{% else %}
+<ul class="items">
+  {% for category in categories %}
+  <li class="item">
+    <div class="item-meta">
+      {{ category.feed_count }} feed{% if category.feed_count != 1 %}s{% endif %}
+      {% if category.unread_count > 0 %}
+      <br /><span class="count">{{ category.unread_count }} unread</span>
+      {% endif %}
+    </div>
+
+    <div>
+      <a class="item-title" href="/categories/{{ category.id }}">{{ category.title }}</a>
+
+      <div class="item-sub item-actions">
+        <form class="search" method="post" action="/categories/{{ category.id }}">
+          {% call m::csrf(layout.csrf_token) %}{% endcall %}
+          <label class="skip" for="rename-{{ category.id }}">
+            Rename {{ category.title }}
+          </label>
+          <input
+            id="rename-{{ category.id }}"
+            name="title"
+            type="text"
+            required
+            value="{{ category.title }}"
+          />
+          <button type="submit" class="button-secondary">Rename</button>
+        </form>
+
+        {% if category.feed_count == 0 %}
+        <form method="post" action="/categories/{{ category.id }}/delete">
+          {% call m::csrf(layout.csrf_token) %}{% endcall %}
+          <button type="submit" class="button-link">Delete</button>
+        </form>
+        {% else %}
+        <span class="muted">Move its feeds elsewhere to delete it</span>
+        {% endif %}
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

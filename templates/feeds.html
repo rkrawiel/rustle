@@ -1,0 +1,73 @@
+{% extends "base.html" %} {% import "macros.html" as m %} {% block main %}
+<h1 class="page-title">Feeds</h1>
+<hr class="rule" />
+
+<div class="actions">
+  <a class="button" href="/feeds/new">Add a feed</a>
+  <form method="post" action="/feeds/refresh">
+    {% call m::csrf(layout.csrf_token) %}{% endcall %}
+    <button type="submit" class="button-secondary">Refresh all</button>
+  </form>
+  <a class="button-secondary button" href="/opml/export">Export OPML</a>
+</div>
+
+<form class="form flow" method="post" action="/opml/import" enctype="multipart/form-data">
+  {# The CSRF field is deliberately first: a multipart body is read in order, so putting
+     it ahead of the file lets the handler verify the request before streaming the upload. #}
+  {% call m::csrf(layout.csrf_token) %}{% endcall %}
+  <div class="field">
+    <label for="opml">Import OPML</label>
+    <input id="opml" name="opml" type="file" accept=".opml,.xml,text/xml,application/xml" required />
+  </div>
+  <div class="actions"><button type="submit" class="button-secondary">Import</button></div>
+</form>
+
+{% if feeds.is_empty() %}
+<div class="prose flow">
+  <p class="lede">No subscriptions yet.</p>
+  <p>Add a feed by its address, or by the address of the site — Rustle will look for the feed.</p>
+</div>
+{% else %}
+<ul class="items">
+  {% for feed in feeds %}
+  <li class="item">
+    <div class="item-meta">
+      <span class="tag">{{ feed.category_title }}</span>
+      {% let status = feed.status() %}
+      {# A word, not only a colour: the design system forbids meaning by colour alone. #}
+      <span class="status-{{ status.0 }} status-label">{{ status.1 }}</span>
+    </div>
+
+    <div>
+      <a class="item-title" href="/feeds/{{ feed.id }}">{{ feed.title }}</a>
+      {% if feed.unread_count > 0 %}
+      <span class="count">({{ feed.unread_count }} unread)</span>
+      {% endif %}
+
+      <div class="item-sub">
+        <span>{{ feed.feed_url }}</span>
+        {% if let Some(error) = feed.last_error %}
+        <span class="status-error status-label">Error:</span>
+        <span>{{ error }}</span>
+        {% endif %}
+      </div>
+
+      <div class="item-sub item-actions">
+        <a href="/feeds/{{ feed.id }}/edit">Edit</a>
+
+        <form method="post" action="/feeds/{{ feed.id }}/refresh">
+          {% call m::csrf(layout.csrf_token) %}{% endcall %}
+          <button type="submit" class="button-link">Refresh</button>
+        </form>
+
+        <form method="post" action="/feeds/{{ feed.id }}/delete">
+          {% call m::csrf(layout.csrf_token) %}{% endcall %}
+          <button type="submit" class="button-link">Delete</button>
+        </form>
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

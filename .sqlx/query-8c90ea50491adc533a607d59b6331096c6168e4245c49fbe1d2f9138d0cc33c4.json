@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from entries e\n         using users u\n         where e.user_id = u.id\n           and u.retention_days > 0\n           and e.read_at is not null\n           and e.starred_at is null\n           and e.published_at < now() - make_interval(days => u.retention_days)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "8c90ea50491adc533a607d59b6331096c6168e4245c49fbe1d2f9138d0cc33c4"
+}

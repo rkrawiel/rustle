@@ -1,0 +1,606 @@
+/* Rustle components. Tokens only -- no literal colour, size or font below this line
+ * except the hairline 1px rules and 0/100% resets the design system calls for.
+ * See claret-paper-design-system.md; this file implements §4 and §5. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 var(--step-0) / 1.6 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-3);
+}
+h2 {
+  font-size: var(--step-2);
+}
+h3 {
+  font-size: var(--step-1);
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--accent-2);
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--space) 0;
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+code {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 0.1em 0.35em;
+}
+
+pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space);
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+blockquote {
+  margin: 1.6em 0;
+  border-inline-start: 3px solid var(--accent);
+  padding: 0 0 0 1.25rem;
+  font-family: var(--font-serif);
+  font-size: var(--step-1);
+  line-height: 1.4;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------- skip link ---------- */
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius);
+}
+
+.skip:focus {
+  left: var(--gutter);
+  top: 0.5rem;
+}
+
+/* ---------- shell ---------- */
+
+.shell {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.masthead {
+  border-bottom: 1px solid var(--border);
+}
+
+.masthead > .shell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+  align-items: baseline;
+  justify-content: space-between;
+  padding-block: 1rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-serif);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.monogram {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: var(--step-0);
+}
+
+/* Nav state is text colour + weight + a 2px rule, never colour alone. */
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  align-items: baseline;
+}
+
+.nav a {
+  color: var(--text-2);
+  text-decoration: none;
+  padding-bottom: 0.15rem;
+  border-bottom: 2px solid transparent;
+}
+
+.nav a:hover {
+  color: var(--text);
+}
+
+.nav a[aria-current="page"] {
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+
+.nav .count {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+}
+
+main {
+  padding-block: clamp(2.5rem, 7vw, 5rem);
+}
+
+.page-title {
+  font-size: var(--step-4);
+}
+
+/* The one deliberate colour moment per page. */
+.page-title + .rule {
+  width: 4.5rem;
+  height: 3px;
+  background: var(--accent);
+  border: 0;
+  margin: 1.75rem 0 0;
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.flow > * + * {
+  margin-block-start: var(--flow, 1em);
+}
+
+.prose {
+  --flow: 1.1em;
+  line-height: 1.7;
+}
+
+.prose h2 {
+  margin-block-start: 2.2em;
+}
+
+.prose h3 {
+  margin-block-start: 1.8em;
+}
+
+.lede {
+  font-size: var(--step-1);
+  color: var(--text-2);
+  max-width: var(--measure);
+}
+
+.muted {
+  color: var(--text-2);
+}
+
+/* ---------- item lists (entries, feeds, categories) ---------- */
+
+.items {
+  list-style: none;
+  margin: var(--space) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr;
+  gap: 0 var(--space);
+  align-items: baseline;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 40rem) {
+  .item {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+}
+
+.item-meta {
+  font-size: var(--step--1);
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.item-title {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.item-title:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+/* Unread is carried by weight, not only by colour. */
+.item.is-unread .item-title {
+  font-weight: 600;
+}
+
+.item.is-selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.item-sub {
+  font-size: var(--step--1);
+  color: var(--text-2);
+  margin-top: 0.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.9rem;
+  align-items: baseline;
+}
+
+.item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+/* ---------- forms and buttons ---------- */
+
+form {
+  margin: 0;
+}
+
+.form {
+  max-width: var(--measure);
+  display: grid;
+  gap: var(--space);
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+label {
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+/* --border is below 3:1 and decorative only; a control boundary carries meaning, so it
+ * uses --text-2 as the design system requires. */
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--text-2);
+  border-radius: var(--radius);
+  padding: 0.45rem 0.6rem;
+  width: 100%;
+}
+
+textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+/* A radio or checkbox is not a text field: the generic rule above would otherwise
+ * stretch it to fill its row. */
+input[type="radio"],
+input[type="checkbox"] {
+  width: auto;
+  padding: 0;
+  border: 0;
+}
+
+.hint {
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+button,
+.button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: var(--radius);
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+  text-decoration: none;
+  display: inline-block;
+}
+
+button:hover,
+.button:hover {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  color: var(--bg);
+}
+
+.button-secondary {
+  background: transparent;
+  border-color: var(--text-2);
+  color: var(--text);
+}
+
+.button-secondary:hover {
+  background: transparent;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* A button that reads as part of a sentence, for per-item toggles. */
+.button-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--accent);
+  font-size: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.button-link:hover {
+  background: none;
+  color: var(--accent-2);
+  text-decoration-thickness: 2px;
+}
+
+.search {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 24rem;
+}
+
+/* ---------- status messages ---------- */
+
+/* Always a word as well as a colour: never meaning by colour alone. */
+.status {
+  background: var(--surface);
+  border-inline-start: 3px solid var(--text-2);
+  border-radius: var(--radius);
+  padding: 0.7rem 1rem;
+  max-width: var(--measure);
+}
+
+.status-success {
+  border-inline-start-color: var(--success);
+}
+.status-warning {
+  border-inline-start-color: var(--warning);
+}
+.status-error {
+  border-inline-start-color: var(--error);
+}
+
+.status-label {
+  font-weight: 600;
+}
+
+.status-success .status-label {
+  color: var(--success);
+}
+.status-warning .status-label {
+  color: var(--warning);
+}
+.status-error .status-label {
+  color: var(--error);
+}
+
+.tag {
+  display: inline-block;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--step--1);
+  border-radius: var(--radius);
+  padding: 0.15rem 0.6rem;
+}
+
+/* ---------- pagination ---------- */
+
+.pager {
+  display: flex;
+  gap: var(--space);
+  justify-content: space-between;
+  margin-top: var(--space);
+  padding-top: var(--space);
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- entry page ---------- */
+
+.entry-body {
+  max-width: var(--measure);
+  --flow: 1.1em;
+  line-height: 1.7;
+}
+
+.entry-body h1,
+.entry-body h2,
+.entry-body h3 {
+  font-size: var(--step-1);
+  margin-block-start: 1.8em;
+}
+
+.entry-body li::marker {
+  color: var(--accent);
+}
+
+.entry-body pre {
+  margin-block: 1.6em;
+}
+
+/* ---------- help overlay ---------- */
+
+.help[hidden] {
+  display: none;
+}
+
+.help {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  z-index: 20;
+}
+
+.help-panel {
+  background: var(--bg);
+  border: 1px solid var(--text-2);
+  border-radius: var(--radius);
+  padding: var(--space);
+  max-width: 34rem;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.help-list {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.4rem var(--space);
+  margin: var(--space) 0 0;
+  font-size: var(--step--1);
+}
+
+.help-list dt {
+  font-family: var(--font-mono);
+  color: var(--text-2);
+}
+
+.help-list dd {
+  margin: 0;
+}
+
+footer {
+  border-top: 1px solid var(--border);
+  padding-block: var(--space);
+  font-size: var(--step--1);
+  color: var(--text-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Print forces light. This block must out-specify :root[data-theme="dark"], which is
+ * (0,2,0) -- the real specificity trap, not the dark-mode one. Hence the paired
+ * selector rather than a bare :root. */
+@media print {
+  :root,
+  :root[data-theme] {
+    color-scheme: light;
+    --bg: #fff;
+    --surface: #fff;
+    --text: #000;
+    --text-2: #333;
+    --accent: #000;
+    --accent-2: #000;
+    --border: #999;
+  }
+
+  .masthead,
+  .nav,
+  .pager,
+  .item-actions,
+  .actions,
+  .help,
+  footer {
+    display: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}

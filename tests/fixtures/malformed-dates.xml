@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Every date here is unusable in a different way. All three must fall back to the
+     fetch time rather than pinning themselves to the top or bottom of every list. -->
+<rss version="2.0">
+  <channel>
+    <title>Bad Dates</title>
+    <link>https://baddates.example/</link>
+    <description>Dates that cannot be trusted.</description>
+    <item>
+      <title>Unparseable</title>
+      <link>https://baddates.example/unparseable</link>
+      <guid>bad-1</guid>
+      <pubDate>not a date at all</pubDate>
+    </item>
+    <item>
+      <title>Far future</title>
+      <link>https://baddates.example/future</link>
+      <guid>bad-2</guid>
+      <pubDate>Fri, 01 Jan 9999 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Antiquity</title>
+      <link>https://baddates.example/ancient</link>
+      <guid>bad-3</guid>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Absent</title>
+      <link>https://baddates.example/absent</link>
+      <guid>bad-4</guid>
+    </item>
+  </channel>
+</rss>

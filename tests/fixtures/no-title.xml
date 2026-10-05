@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Untitled entries are normal in a link blog. The link stands in for a title. -->
+<rss version="2.0">
+  <channel>
+    <title>Untitled Entries</title>
+    <link>https://notitle.example/</link>
+    <description>A link blog.</description>
+    <item>
+      <link>https://notitle.example/first</link>
+      <guid>nt-1</guid>
+      <pubDate>Wed, 30 Sep 2026 08:00:00 GMT</pubDate>
+      <description>Just a remark.</description>
+    </item>
+  </channel>
+</rss>

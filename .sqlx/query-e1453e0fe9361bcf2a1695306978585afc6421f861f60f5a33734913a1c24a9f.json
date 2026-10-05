@@ -1,0 +1,31 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select id from entries\n                 where user_id = $1 and feed_id = $4 and (published_at, id) < ($2, $3)\n                 order by published_at desc, id desc limit 1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Timestamptz",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "e1453e0fe9361bcf2a1695306978585afc6421f861f60f5a33734913a1c24a9f"
+}

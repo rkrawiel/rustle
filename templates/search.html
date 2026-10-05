@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block main %}
+<h1 class="page-title">Search</h1>
+<hr class="rule" />
+
+{% if let Some(query) = query %}
+<p class="lede">
+  {% if entries.is_empty() %}
+  No matches for &ldquo;{{ query }}&rdquo;.
+  {% else %}
+  {{ total }} match{% if total != 1 %}es{% endif %} for &ldquo;{{ query }}&rdquo;{% if total > limit %}, showing the top {{ limit }}{% endif %}.
+  {% endif %}
+</p>
+
+{% if !entries.is_empty() %}
+<ul class="items">
+  {% for entry in entries %}
+  <li class="item {% if entry.is_unread() %}is-unread{% endif %}">
+    <div class="item-meta">
+      <time datetime="{{ entry.published_at.to_rfc3339() }}">
+        {{ entry.published_at.format("%b %-d, %Y") }}
+      </time>
+    </div>
+
+    <div>
+      <a class="item-title" href="/entries/{{ entry.id }}?view=all">{{ entry.title }}</a>
+      {% if entry.is_starred() %}<span class="status-label">Starred</span>{% endif %}
+
+      <div class="item-sub">
+        <span>{{ entry.feed_title }}</span>
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %} {% else %}
+<div class="prose flow">
+  <p class="lede">Search your entries by title and content.</p>
+  <p>Quoted phrases, <code>or</code>, and <code>-exclusions</code> are all understood.</p>
+</div>
+{% endif %} {% endblock %}

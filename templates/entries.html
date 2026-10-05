@@ -1,0 +1,79 @@
+{% extends "base.html" %} {% import "macros.html" as m %} {% block main %}
+<h1 class="page-title">{{ heading }}</h1>
+<hr class="rule" />
+
+<p class="lede">{{ summary }}</p>
+
+{% if !entries.is_empty() || refresh_feed_id.is_some() %}
+<div class="actions">
+  {% if !entries.is_empty() %}
+  <form id="mark-all-read-form" method="post" action="/entries/read-all">
+    {% call m::csrf(layout.csrf_token) %}{% endcall %}
+    <input type="hidden" name="view" value="{{ view_token }}" />
+    <button type="submit" class="button-secondary">Mark all as read</button>
+  </form>
+  {% endif %}
+
+  {% if let Some(feed_id) = refresh_feed_id %}
+  <form id="refresh-feed-form" method="post" action="/feeds/{{ feed_id }}/refresh">
+    {% call m::csrf(layout.csrf_token) %}{% endcall %}
+    <button type="submit" class="button-secondary">Refresh this feed</button>
+  </form>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if entries.is_empty() %}
+<div class="prose flow">
+  <p class="lede">{{ empty }}</p>
+</div>
+{% else %}
+<ul class="items">
+  {% for entry in entries %}
+  <li class="item {% if entry.is_unread() %}is-unread{% endif %}" id="entry-{{ entry.id }}">
+    <div class="item-meta">
+      <time datetime="{{ entry.published_at.to_rfc3339() }}">
+        {{ entry.published_at.format("%b %-d, %Y") }}
+      </time>
+    </div>
+
+    <div>
+      <a class="item-title" href="/entries/{{ entry.id }}?view={{ view_token }}">{{ entry.title }}</a>
+      {% if entry.is_starred() %}<span class="status-label">Starred</span>{% endif %}
+
+      <div class="item-sub">
+        <span>{{ entry.feed_title }}</span>
+      </div>
+
+      <div class="item-sub item-actions">
+        <form method="post" action="/entries/{{ entry.id }}/read">
+          {% call m::csrf(layout.csrf_token) %}{% endcall %}
+          <input type="hidden" name="view" value="{{ view_token }}" />
+          <button type="submit" class="button-link">
+            {% if entry.is_unread() %}Mark read{% else %}Mark unread{% endif %}
+          </button>
+        </form>
+
+        <form method="post" action="/entries/{{ entry.id }}/star">
+          {% call m::csrf(layout.csrf_token) %}{% endcall %}
+          <input type="hidden" name="view" value="{{ view_token }}" />
+          <button type="submit" class="button-link">
+            {% if entry.is_starred() %}Unstar{% else %}Star{% endif %}
+          </button>
+        </form>
+
+        {% if let Some(url) = entry.url %}
+        <a href="{{ url }}" rel="noopener noreferrer" data-original-link>Original</a>
+        {% endif %}
+      </div>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+
+{% if let Some(older) = older %}
+<nav class="pager" aria-label="Pagination">
+  <span></span>
+  <a href="{{ path }}{{ older }}">Older</a>
+</nav>
+{% endif %} {% endif %} {% endblock %}

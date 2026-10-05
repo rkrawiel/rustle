@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" data-theme="{{ layout.theme.as_str() }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ layout.title }} · Rustle</title>
+    {% for href in layout.stylesheets %}
+    <link rel="stylesheet" href="{{ href }}" />
+    {%- endfor %}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="masthead">
+      <div class="shell">
+        <a class="brand" href="/">
+          <span class="monogram" aria-hidden="true">R</span>
+          Rustle
+        </a>
+
+        {% if layout.signed_in %}
+        <nav class="nav" aria-label="Main">
+          <a href="/unread" {% if layout.current == "unread" %}aria-current="page"{% endif %}>
+            Unread {% if layout.unread_count > 0 %}<span class="count">({{ layout.unread_count }})</span>{% endif %}
+          </a>
+          <a href="/all" {% if layout.current == "all" %}aria-current="page"{% endif %}>All</a>
+          <a href="/starred" {% if layout.current == "starred" %}aria-current="page"{% endif %}>Starred</a>
+          <a href="/feeds" {% if layout.current == "feeds" %}aria-current="page"{% endif %}>Feeds</a>
+          <a href="/categories" {% if layout.current == "categories" %}aria-current="page"{% endif %}>Categories</a>
+          <a href="/settings" {% if layout.current == "settings" %}aria-current="page"{% endif %}>Settings</a>
+        </nav>
+
+        <form class="search" method="get" action="/search" role="search">
+          <label class="skip" for="search-q">Search entries</label>
+          <input
+            id="search-q"
+            name="q"
+            type="search"
+            placeholder="Search"
+            value="{{ layout.search_query }}"
+          />
+          <button type="submit" class="button-secondary">Search</button>
+        </form>
+        {% endif %}
+      </div>
+    </header>
+
+    <main id="main" class="shell">{% block main %}{% endblock %}</main>
+
+    <footer class="shell">
+      {% if layout.signed_in %}
+      <div class="actions">
+        <form method="post" action="/logout">
+          <input type="hidden" name="csrf_token" value="{{ layout.csrf_token }}" />
+          <button type="submit" class="button-link">Sign out</button>
+        </form>
+        <button
+          type="button"
+          class="button-link"
+          id="shortcut-help-open"
+          aria-haspopup="dialog"
+          aria-controls="shortcut-help"
+        >
+          Keyboard shortcuts
+        </button>
+      </div>
+      {% else %}
+      <p>Rustle · a minimalist feed reader</p>
+      {% endif %}
+    </footer>
+
+    {% if layout.signed_in %}
+    <div
+      class="help"
+      id="shortcut-help"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="shortcut-help-heading"
+      hidden
+    >
+      <div class="help-panel">
+        <h2 id="shortcut-help-heading">Keyboard shortcuts</h2>
+        <dl class="help-list">
+          <dt>j</dt>
+          <dd>Next entry</dd>
+          <dt>k</dt>
+          <dd>Previous entry</dd>
+          <dt>o / Enter</dt>
+          <dd>Open selected entry</dd>
+          <dt>v</dt>
+          <dd>Open original in a new tab</dd>
+          <dt>m</dt>
+          <dd>Toggle read</dd>
+          <dt>s</dt>
+          <dd>Toggle star</dd>
+          <dt>A</dt>
+          <dd>Mark all as read</dd>
+          <dt>g u</dt>
+          <dd>Go to Unread</dd>
+          <dt>g s</dt>
+          <dd>Go to Starred</dd>
+          <dt>g f</dt>
+          <dd>Go to Feeds</dd>
+          <dt>g c</dt>
+          <dd>Go to Categories</dd>
+          <dt>/</dt>
+          <dd>Focus search</dd>
+          <dt>r</dt>
+          <dd>Refresh the current feed</dd>
+          <dt>?</dt>
+          <dd>Show or hide this help</dd>
+          <dt>Esc</dt>
+          <dd>Close this help</dd>
+        </dl>
+        <div class="actions">
+          <button type="button" id="shortcut-help-close" aria-label="Close keyboard shortcuts help">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+    {% for src in layout.scripts %}
+    <script src="{{ src }}" defer></script>
+    {%- endfor %} {% endif %}
+  </body>
+</html>

@@ -1,0 +1,114 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select e.id, e.feed_id, f.title as feed_title, e.title, e.url,\n                e.published_at, e.read_at, e.starred_at\n         from entries e join feeds f on f.id = e.feed_id\n         where e.user_id = $1 and e.search @@ websearch_to_tsquery('english', $2)\n         order by ts_rank(e.search, websearch_to_tsquery('english', $2)) desc,\n                  e.published_at desc\n         limit $3",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "feed_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "feed_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "feed_title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "published_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "published_at"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "read_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "read_at"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "starred_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "starred_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "76d5fc1f625460a025185b4ce31ff9a51ccfd135bd153c5f94db7ba0fbf23c21"
+}

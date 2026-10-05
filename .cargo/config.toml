@@ -1,0 +1,7 @@
+# Build from the committed `.sqlx` query cache by default, so a fresh clone compiles with
+# no database running. Override for a session that regenerates the cache:
+#   PowerShell:  $env:SQLX_OFFLINE = "false"
+#   sh:          SQLX_OFFLINE=false cargo build
+# `force` is deliberately omitted so that override works.
+[env]
+SQLX_OFFLINE = "true"

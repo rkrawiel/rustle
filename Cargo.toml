@@ -1,0 +1,88 @@
+[package]
+name = "rustle"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.90"
+description = "A minimalist self-hosted RSS reader"
+license = "MIT"
+publish = false
+
+[lib]
+name = "rustle"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rustle"
+path = "src/main.rs"
+
+# Versions are pinned exactly: this project spans several crates that each pick an
+# `http`/`tower`/`rustls` major, and a silent bump can produce two incompatible `Service`
+# graphs. `scripts/dep-gate.ps1` enforces that `cargo tree -d` stays clean.
+[dependencies]
+# --- config ---
+# Loaded once at startup in src/main.rs, before Config::from_env(). A no-op wherever a
+# real process environment already supplies these variables (systemd's EnvironmentFile=,
+# Docker's `environment:`) — dotenvy never overrides an already-set variable, and silently
+# finding no .env file is exactly what production looks like.
+dotenvy = "=0.15.7"
+
+# --- web ---
+axum = { version = "=0.8.9", default-features = false, features = ["http1", "json", "query", "form", "tokio", "multipart", "macros"] }
+tower = { version = "=0.5.3", features = ["util", "timeout"] }
+tower-http = { version = "=0.7.1", features = ["trace", "timeout", "compression-gzip", "compression-br", "set-header", "limit"] }
+askama = "=0.16.1"
+mime = "=0.3.17"
+
+# --- runtime ---
+tokio = { version = "=1.53.1", features = ["rt-multi-thread", "macros", "signal", "sync", "time"] }
+tokio-util = { version = "=0.7.19", default-features = false }
+
+# --- database ---
+# `chrono` and NEVER `time`: sqlx's macros prefer `time` when both are enabled, which
+# produces TIMESTAMPTZ type errors that look like sqlx itself is broken.
+sqlx = { version = "=0.9.0", default-features = false, features = [
+    "runtime-tokio", "tls-rustls-ring", "postgres", "macros", "migrate", "chrono", "derive",
+] }
+chrono = { version = "=0.4.45", default-features = false, features = ["std", "clock", "serde"] }
+
+# --- feed fetching and parsing ---
+# `rustls-no-provider` keeps aws-lc-rs out of the graph (see PLAN.md §3), but it also means
+# the process must install a crypto provider itself; `feed::fetch` does that with ring.
+rustls = { version = "=0.23.45", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+reqwest = { version = "=0.13.5", default-features = false, features = ["rustls-no-provider", "gzip", "brotli", "charset", "http2"] }
+feed-rs = "=3.0.0"
+ammonia = "=4.2.0"
+# html5ever comes in via ammonia anyway, so feed autodiscovery costs no extra binary size.
+html5ever = "=0.40.1"
+quick-xml = "=0.42.0"
+url = "=2.5.8"
+
+# --- security ---
+argon2 = "=0.6.0"
+sha2 = "=0.11.0"
+subtle = "=2.6.1"
+base64 = "=0.23.1"
+rand = "=0.10.3"
+
+# --- plumbing ---
+serde = { version = "=1.0.229", features = ["derive"] }
+# Two passes over the same form body: once for the CSRF token, once for the handler's
+# own fields. serde_urlencoded cannot do `#[serde(flatten)]`, which rules out a single
+# combined struct. This is the exact version axum uses, so no duplicate enters the graph.
+serde_urlencoded = "=0.7.1"
+thiserror = "=2.0.21"
+tracing = "=0.1.44"
+tracing-subscriber = { version = "=0.3.23", default-features = false, features = ["fmt", "env-filter", "ansi"] }
+
+[dev-dependencies]
+wiremock = "=0.6.5"
+http-body-util = "=0.1.3"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+# Deliberately NOT `panic = "abort"`: the poller relies on JoinSet reporting a per-feed
+# panic so one bad feed cannot silently stop all fetching.
+panic = "unwind"

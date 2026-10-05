@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update feeds\n                 set last_checked_at = $2,\n                     next_check_at = $3,\n                     rate_limited_until = $4,\n                     last_error = $5\n                 where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Timestamptz",
+        "Timestamptz",
+        "Timestamptz",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "3eece0438fa0d1c1c86cd68e03f383a5c5f647e2410c7b9851578ccebd0e625c"
+}

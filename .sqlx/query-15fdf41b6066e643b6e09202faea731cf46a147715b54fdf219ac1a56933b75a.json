@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update entries set read_at = now()\n                 where user_id = $1 and read_at is null and starred_at is not null",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "15fdf41b6066e643b6e09202faea731cf46a147715b54fdf219ac1a56933b75a"
+}

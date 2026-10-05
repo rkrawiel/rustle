@@ -1,0 +1,64 @@
+{% extends "base.html" %} {% import "macros.html" as m %} {% block main %}
+<h1 class="page-title">Set up Rustle</h1>
+<hr class="rule" />
+
+<div class="prose flow">
+  <p class="lede">
+    Rustle is a single-user reader. Create your account to start subscribing.
+  </p>
+</div>
+
+{% if let Some(error) = error %} {% call m::status("error", "Error", error) %}{% endcall %} {% endif %}
+
+<form class="form flow" method="post" action="/setup">
+  <div class="field">
+    <label for="setup_token">Setup token</label>
+    <input
+      id="setup_token"
+      name="setup_token"
+      type="text"
+      required
+      autocomplete="off"
+      spellcheck="false"
+      value="{{ setup_token }}"
+    />
+    <p class="hint">
+      Printed in the server log when Rustle started. It stops a stranger claiming a fresh
+      instance before you reach it.
+    </p>
+  </div>
+
+  <div class="field">
+    <label for="username">Username</label>
+    <input
+      id="username"
+      name="username"
+      type="text"
+      required
+      autocomplete="username"
+      spellcheck="false"
+      value="{{ username }}"
+    />
+  </div>
+
+  <div class="field">
+    <label for="password">Password</label>
+    <input
+      id="password"
+      name="password"
+      type="password"
+      required
+      autocomplete="new-password"
+      minlength="{{ min_password_length }}"
+    />
+    <p class="hint">
+      At least {{ min_password_length }} characters. Length is the only rule — a
+      passphrase beats a short password with punctuation in it.
+    </p>
+  </div>
+
+  <div class="actions">
+    <button type="submit">Create account</button>
+  </div>
+</form>
+{% endblock %}

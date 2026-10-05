@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update feeds\n         set title = $4,\n             category_id = $3,\n             feed_url = $5,\n             etag = case when feeds.feed_url = $5 then feeds.etag else null end,\n             last_modified = case when feeds.feed_url = $5 then feeds.last_modified else null end,\n             failure_count = case when feeds.feed_url = $5 then feeds.failure_count else 0 end,\n             last_error = case when feeds.feed_url = $5 then feeds.last_error else null end,\n             disabled_at = case when feeds.feed_url = $5 then feeds.disabled_at else null end\n         where user_id = $1 and id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "8aa3f75a1edfec65c5242b71290658102eacb3730cd28405316b64310b23feb5"
+}

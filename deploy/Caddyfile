@@ -1,0 +1,10 @@
+# Reverse proxy with automatic HTTPS: Caddy obtains and renews a Let's Encrypt
+# certificate for the domain below on its own, no certbot step required.
+#
+# RUSTLE_DOMAIN and RUSTLE_UPSTREAM let one file serve both deployment paths in
+# deploy/README.md: left at their defaults, this is the bare-metal/systemd layout, where
+# Caddy and Rustle share localhost; docker-compose.yml overrides both for its own
+# container network.
+{$RUSTLE_DOMAIN:example.com} {
+	reverse_proxy {$RUSTLE_UPSTREAM:127.0.0.1:8080}
+}

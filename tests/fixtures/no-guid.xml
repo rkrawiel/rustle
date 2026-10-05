@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- No <guid> anywhere, which is common. Identity has to come from the link, or every
+     poll would duplicate every entry. -->
+<rss version="2.0">
+  <channel>
+    <title>No GUIDs</title>
+    <link>https://noguid.example/</link>
+    <description>Identity by link only.</description>
+    <item>
+      <title>First</title>
+      <link>https://noguid.example/first</link>
+      <pubDate>Wed, 30 Sep 2026 08:00:00 GMT</pubDate>
+      <description>One.</description>
+    </item>
+    <item>
+      <title>Second</title>
+      <link>https://noguid.example/second</link>
+      <pubDate>Tue, 29 Sep 2026 08:00:00 GMT</pubDate>
+      <description>Two.</description>
+    </item>
+  </channel>
+</rss>

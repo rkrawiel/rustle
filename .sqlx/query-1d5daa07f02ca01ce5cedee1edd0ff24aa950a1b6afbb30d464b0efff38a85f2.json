@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update categories set title = $3 where user_id = $1 and id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "1d5daa07f02ca01ce5cedee1edd0ff24aa950a1b6afbb30d464b0efff38a85f2"
+}

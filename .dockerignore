@@ -1,0 +1,7 @@
+/target
+.env
+*.pdb
+.git
+.github
+deploy
+docker-compose.dev.yml

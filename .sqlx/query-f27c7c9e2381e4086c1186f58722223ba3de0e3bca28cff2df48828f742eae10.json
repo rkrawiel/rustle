@@ -1,0 +1,30 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select id from entries\n                 where user_id = $1 and starred_at is not null\n                   and (published_at, id) > ($2, $3)\n                 order by published_at asc, id asc limit 1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Timestamptz",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "f27c7c9e2381e4086c1186f58722223ba3de0e3bca28cff2df48828f742eae10"
+}

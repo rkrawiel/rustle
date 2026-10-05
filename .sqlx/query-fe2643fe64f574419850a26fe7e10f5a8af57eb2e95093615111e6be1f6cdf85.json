@@ -1,0 +1,179 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select f.id,\n                f.title,\n                f.feed_url,\n                f.site_url,\n                f.category_id,\n                c.title as category_title,\n                f.last_checked_at,\n                f.last_success_at,\n                f.next_check_at,\n                f.failure_count,\n                f.rate_limited_until,\n                f.last_error,\n                f.disabled_at,\n                count(e.id) as unread_count\n         from feeds f\n         join categories c on c.id = f.category_id\n         left join entries e on e.feed_id = f.id and e.read_at is null\n         where f.user_id = $1\n         group by f.id, c.title\n         order by lower(c.title), lower(f.title)",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "feed_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "feed_url"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "site_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "site_url"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "category_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "category_id"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "category_title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "categories",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "last_checked_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "last_checked_at"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "last_success_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "last_success_at"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "next_check_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "next_check_at"
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "failure_count",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "failure_count"
+          }
+        }
+      },
+      {
+        "ordinal": 10,
+        "name": "rate_limited_until",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "rate_limited_until"
+          }
+        }
+      },
+      {
+        "ordinal": 11,
+        "name": "last_error",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "last_error"
+          }
+        }
+      },
+      {
+        "ordinal": 12,
+        "name": "disabled_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "disabled_at"
+          }
+        }
+      },
+      {
+        "ordinal": 13,
+        "name": "unread_count",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      null
+    ]
+  },
+  "hash": "fe2643fe64f574419850a26fe7e10f5a8af57eb2e95093615111e6be1f6cdf85"
+}

@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update feeds\n         set next_check_at = now(), rate_limited_until = null, disabled_at = null\n         where user_id = $1 and id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "bbd03559e93e960572743608837dcb4419318c1f0db9dfaaadfdef90ee556ce1"
+}

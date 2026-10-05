@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% import "macros.html" as m %} {% block main %}
+<h1 class="page-title">{% if feed_id.is_some() %}Edit feed{% else %}Add a feed{% endif %}</h1>
+<hr class="rule" />
+
+{% if let Some(error) = error %} {% call m::status("error", "Error", error) %}{% endcall %} {% endif %}
+
+<form
+  class="form flow"
+  method="post"
+  action="{% if let Some(id) = feed_id %}/feeds/{{ id }}{% else %}/feeds{% endif %}"
+>
+  {% call m::csrf(layout.csrf_token) %}{% endcall %}
+
+  <div class="field">
+    <label for="url">Address</label>
+    <input id="url" name="url" type="text" required spellcheck="false" value="{{ feed_url }}" />
+    <p class="hint">
+      The feed's address, or the site's — Rustle follows the page's feed link if you give it
+      one.
+    </p>
+  </div>
+
+  {% if feed_id.is_some() %}
+  <div class="field">
+    <label for="title">Title</label>
+    <input id="title" name="title" type="text" required value="{{ title }}" />
+  </div>
+  {% endif %}
+
+  {% if !categories.is_empty() %}
+  <div class="field">
+    <label for="category_id">Category</label>
+    <select id="category_id" name="category_id">
+      {% for category in categories %}
+      <option
+        value="{{ category.id }}"
+        {% if category_id == category.id %}selected{% endif %}
+      >
+        {{ category.title }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+
+  <div class="actions">
+    <button type="submit">{% if feed_id.is_some() %}Save{% else %}Subscribe{% endif %}</button>
+    <a href="/feeds">Cancel</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select e.id from entries e join feeds f on f.id = e.feed_id\n                 where e.user_id = $1 and f.category_id = $4\n                   and (e.published_at, e.id) < ($2, $3)\n                 order by e.published_at desc, e.id desc limit 1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "entries",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Timestamptz",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "610187ca0d4a1872c64df702a62e2f0382445b547d41dd7f7a46778ed57f1868"
+}

@@ -1,0 +1,62 @@
+{% extends "base.html" %} {% import "macros.html" as m %} {% block main %}
+<p class="item-sub"><a href="{{ view_path }}">&larr; Back</a></p>
+
+<article class="prose flow">
+  <h1 class="page-title">{{ entry.title }}</h1>
+  <hr class="rule" />
+
+  <p class="item-meta">
+    {{ entry.feed_title }}
+    {% if let Some(author) = entry.author %} &middot; {{ author }}{% endif %}
+    &middot;
+    <time datetime="{{ entry.published_at.to_rfc3339() }}">
+      {{ entry.published_at.format("%B %-d, %Y %H:%M") }}
+    </time>
+  </p>
+
+  <div class="actions">
+    {% if let Some(url) = entry.url %}
+    <a
+      class="button-secondary button"
+      href="{{ url }}"
+      rel="noopener noreferrer"
+      target="_blank"
+      data-original-link
+    >
+      Open original
+    </a>
+    {% endif %}
+
+    <form id="entry-read-form" method="post" action="/entries/{{ entry.id }}/read">
+      {% call m::csrf(layout.csrf_token) %}{% endcall %}
+      <input type="hidden" name="view" value="{{ view_token }}" />
+      <button type="submit" class="button-secondary">
+        {% if entry.read_at.is_some() %}Mark unread{% else %}Mark read{% endif %}
+      </button>
+    </form>
+
+    <form id="entry-star-form" method="post" action="/entries/{{ entry.id }}/star">
+      {% call m::csrf(layout.csrf_token) %}{% endcall %}
+      <input type="hidden" name="view" value="{{ view_token }}" />
+      <button type="submit" class="button-secondary">
+        {% if entry.starred_at.is_some() %}Unstar{% else %}Star{% endif %}
+      </button>
+    </form>
+  </div>
+
+  <div class="entry-body flow">{{ entry.content|safe }}</div>
+</article>
+
+<nav class="pager" aria-label="Entry navigation">
+  {% if let Some(id) = newer %}
+  <a href="/entries/{{ id }}?view={{ view_token }}" data-nav="newer">&larr; Newer</a>
+  {% else %}
+  <span></span>
+  {% endif %}
+  {% if let Some(id) = older %}
+  <a href="/entries/{{ id }}?view={{ view_token }}" data-nav="older">Older &rarr;</a>
+  {% else %}
+  <span></span>
+  {% endif %}
+</nav>
+{% endblock %}

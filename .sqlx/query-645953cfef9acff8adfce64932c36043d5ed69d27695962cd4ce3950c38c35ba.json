@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update entries\n         set read_at = case when read_at is null then now() else null end\n         where user_id = $1 and id = $2\n         returning read_at is not null as \"is_read!\"",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "is_read!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "645953cfef9acff8adfce64932c36043d5ed69d27695962cd4ce3950c38c35ba"
+}

@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update feeds\n         set last_checked_at = $2,\n             last_success_at = $2,\n             next_check_at = $3,\n             failure_count = 0,\n             rate_limited_until = null,\n             last_error = null,\n             disabled_at = null,\n             etag = coalesce($4, feeds.etag),\n             last_modified = coalesce($5, feeds.last_modified),\n             title = coalesce($6, feeds.title),\n             site_url = coalesce($7, feeds.site_url)\n         where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Timestamptz",
+        "Timestamptz",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "91e5e8c3e5c342f2a2bfa41ed0884ec33ccef200ebfade746affc2f0278face6"
+}

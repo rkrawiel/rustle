@@ -1,0 +1,31 @@
+# Development and test database only. See docker-compose.yml for running Rustle itself.
+#
+# Named explicitly so this project and docker-compose.yml's never share one: both define
+# a `db` service, and two stacks resolving to the same default project name (the
+# directory name) would resolve to the same container name for each and recreate one
+# another's `db` out from under it.
+name: rustle-dev
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: rustle
+      POSTGRES_PASSWORD: rustle
+      POSTGRES_DB: rustle
+    ports:
+      - "5432:5432"
+    # `#[sqlx::test]` creates a scratch database per test and opens a pool to each, so the
+    # default 100 connections runs out on a many-core machine.
+    command: ["postgres", "-c", "max_connections=300"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rustle -d rustle"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+    volumes:
+      # Postgres 18+ expects a single mount at /var/lib/postgresql and places the cluster
+      # in a major-version subdirectory; mounting .../data directly makes it refuse to start.
+      - rustle-dev-db:/var/lib/postgresql
+
+volumes:
+  rustle-dev-db:

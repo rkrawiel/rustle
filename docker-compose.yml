@@ -1,0 +1,66 @@
+# Runs Rustle itself, behind Caddy, against its own PostgreSQL. For a local development
+# database only (no app container), see docker-compose.dev.yml instead.
+#
+# Required in .env (see deploy/README.md): POSTGRES_PASSWORD, RUSTLE_BASE_URL,
+# RUSTLE_DOMAIN. Everything else has the documented default from .env.example.
+#
+# Named explicitly — see docker-compose.dev.yml's own comment on why.
+name: rustle
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: rustle
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a password in .env}
+      POSTGRES_DB: rustle
+    # Postgres 18+ expects a single mount at /var/lib/postgresql and places the cluster in
+    # a major-version subdirectory; mounting .../data directly makes it refuse to start.
+    volumes:
+      - rustle-db:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rustle -d rustle"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://rustle:${POSTGRES_PASSWORD:?set a password in .env}@db:5432/rustle
+      # 0.0.0.0, not the binary's own default of 127.0.0.1: that default assumes Caddy
+      # and the app share a network namespace, which is only true outside Docker.
+      RUSTLE_LISTEN_ADDR: 0.0.0.0:8080
+      RUSTLE_BASE_URL: ${RUSTLE_BASE_URL:?set your public https URL in .env}
+      RUSTLE_POLL_INTERVAL_MINUTES: ${RUSTLE_POLL_INTERVAL_MINUTES:-60}
+      RUSTLE_LOG_LEVEL: ${RUSTLE_LOG_LEVEL:-info}
+      RUSTLE_FETCH_CONCURRENCY: ${RUSTLE_FETCH_CONCURRENCY:-8}
+      RUSTLE_SESSION_TTL_DAYS: ${RUSTLE_SESSION_TTL_DAYS:-30}
+      RUSTLE_RETENTION_DAYS: ${RUSTLE_RETENTION_DAYS:-0}
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      RUSTLE_DOMAIN: ${RUSTLE_DOMAIN:?set your domain in .env}
+      # The example Caddyfile's own default (127.0.0.1:8080) assumes the bare-metal,
+      # no-Docker layout; here Caddy and the app are different containers.
+      RUSTLE_UPSTREAM: app:8080
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - rustle-caddy-data:/data
+      - rustle-caddy-config:/config
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  rustle-db:
+  rustle-caddy-data:
+  rustle-caddy-config:

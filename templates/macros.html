@@ -1,0 +1,19 @@
+{#
+  Shared template fragments.
+
+  `csrf` is the reason this file exists: every state-changing form calls it, so the hidden
+  field cannot be left off one form by accident. The matching check is in
+  `web::extract::CsrfForm`.
+#}
+{% macro csrf(token) %}<input type="hidden" name="csrf_token" value="{{ token }}" />{% endmacro %}
+
+{#
+  A status message. Always carries a word as well as a colour, because the design system
+  forbids conveying meaning by colour alone. `aria-live="polite"` so a screen reader
+  announces it after a redirect without interrupting.
+#}
+{% macro status(kind, label, message) %}
+<p class="status status-{{ kind }}" role="status" aria-live="polite">
+  <span class="status-label">{{ label }}:</span> {{ message }}
+</p>
+{% endmacro %}

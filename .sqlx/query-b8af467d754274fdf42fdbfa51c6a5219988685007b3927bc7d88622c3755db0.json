@@ -1,0 +1,209 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select id, user_id, category_id, title, feed_url, site_url, etag, last_modified,\n                next_check_at, check_interval_seconds, last_checked_at, last_success_at,\n                failure_count, rate_limited_until, last_error, disabled_at\n         from feeds\n         where user_id = $1 and id = $2",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "user_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "category_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "category_id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "feed_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "feed_url"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "site_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "site_url"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "etag",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "etag"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "last_modified",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "last_modified"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "next_check_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "next_check_at"
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "check_interval_seconds",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "check_interval_seconds"
+          }
+        }
+      },
+      {
+        "ordinal": 10,
+        "name": "last_checked_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "last_checked_at"
+          }
+        }
+      },
+      {
+        "ordinal": 11,
+        "name": "last_success_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "last_success_at"
+          }
+        }
+      },
+      {
+        "ordinal": 12,
+        "name": "failure_count",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "failure_count"
+          }
+        }
+      },
+      {
+        "ordinal": 13,
+        "name": "rate_limited_until",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "rate_limited_until"
+          }
+        }
+      },
+      {
+        "ordinal": 14,
+        "name": "last_error",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "last_error"
+          }
+        }
+      },
+      {
+        "ordinal": 15,
+        "name": "disabled_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "feeds",
+            "name": "disabled_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "b8af467d754274fdf42fdbfa51c6a5219988685007b3927bc7d88622c3755db0"
+}

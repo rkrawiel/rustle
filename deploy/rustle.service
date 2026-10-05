@@ -1,0 +1,41 @@
+[Unit]
+Description=Rustle RSS reader
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=rustle
+Group=rustle
+EnvironmentFile=/etc/rustle/rustle.env
+ExecStart=/usr/local/bin/rustle
+Restart=on-failure
+RestartSec=2
+
+# Migrations are embedded in the binary and run automatically on startup, so an upgrade
+# is: replace /usr/local/bin/rustle, then `systemctl restart rustle`.
+
+# Hardening. Rustle keeps no state of its own on disk — everything lives in PostgreSQL —
+# so the filesystem can be locked down with no ReadWritePaths= exceptions at all.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Neither a guid nor a link: identity falls back to title plus date, which is stable
+     for a given entry across fetches. -->
+<rss version="2.0">
+  <channel>
+    <title>Nothing To Identify With</title>
+    <link>https://nothing.example/</link>
+    <description>No guid, no link.</description>
+    <item>
+      <title>A titled but unlinked note</title>
+      <pubDate>Wed, 30 Sep 2026 08:00:00 GMT</pubDate>
+      <description>Body text.</description>
+    </item>
+  </channel>
+</rss>

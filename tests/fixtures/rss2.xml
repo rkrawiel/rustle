@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>RSS 2.0 Example</title>
+    <link>https://rss2.example/</link>
+    <description>An ordinary RSS 2.0 feed.</description>
+    <item>
+      <title>First RSS entry</title>
+      <link>https://rss2.example/first</link>
+      <guid isPermaLink="false">rss2-0001</guid>
+      <pubDate>Wed, 30 Sep 2026 08:00:00 GMT</pubDate>
+      <author>ada@rss2.example (Ada)</author>
+      <description>Just the summary.</description>
+      <content:encoded><![CDATA[<p>The full content of the first entry.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Second RSS entry</title>
+      <link>https://rss2.example/second</link>
+      <guid isPermaLink="false">rss2-0002</guid>
+      <pubDate>Tue, 29 Sep 2026 08:00:00 GMT</pubDate>
+      <description>Only a description here.</description>
+    </item>
+  </channel>
+</rss>
