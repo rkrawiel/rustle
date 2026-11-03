@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feed xmlns="http://www.w3.org/2005/Atom">
+	<title type="text">Niebezpiecznik.pl</title>
+	<updated>2026-10-03T20:13:48Z</updated>
+	<link href="https://niebezpiecznik.pl" rel="alternate" type="text/html"/>
+	<id>https://niebezpiecznik.pl/feed/atom/</id>
+	<link href="https://niebezpiecznik.pl/feed/atom/" rel="self" type="application/atom+xml"/>
+	<entry>
+		<author><name>redakcja</name></author>
+		<title type="html"><![CDATA[&#x1f4cc; Jak nie dać się zhackować? Ruszamy w Polskę z kolejną edycją naszego kultowego wykładu]]></title>
+		<link href="https://niebezpiecznik.pl/post/jak-nie-dac-sie-zhackowac/" rel="alternate" type="text/html"/>
+		<id>https://niebezpiecznik.pl/?p=27373</id>
+		<updated>2026-09-21T17:24:02Z</updated>
+		<published>2026-09-21T10:55:36Z</published>
+		<summary type="html"><![CDATA[Some summary]]></summary>
+	</entry>
+	<entry>
+		<author><name>redakcja</name></author>
+		<title type="html"><![CDATA[AI do rozbierania kobiet &#8212; takie reklamy latały po Facebooku]]></title>
+		<link href="https://niebezpiecznik.pl/post/ai-do-rozbierania/" rel="alternate" type="text/html"/>
+		<id>https://niebezpiecznik.pl/?p=27300</id>
+		<updated>2026-09-20T17:24:02Z</updated>
+		<published>2026-09-20T10:55:36Z</published>
+		<summary type="html"><![CDATA[Some summary 2]]></summary>
+	</entry>
+</feed>

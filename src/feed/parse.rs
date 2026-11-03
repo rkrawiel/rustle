@@ -89,7 +89,7 @@ pub fn parse(
         title: parsed
             .title
             .as_ref()
-            .map(|text| text.content.trim().to_owned())
+            .map(|text| sanitize::decode_text(text.content.trim()))
             .filter(|title| !title.is_empty()),
         site_url,
         entries,
@@ -128,7 +128,7 @@ fn convert(entry: &feed_rs::model::Entry, content_base: &Url, now: DateTime<Utc>
     let title = entry
         .title
         .as_ref()
-        .map(|text| text.content.trim().to_owned())
+        .map(|text| sanitize::decode_text(text.content.trim()))
         .filter(|title| !title.is_empty())
         // An untitled entry is normal in a link-blog feed; showing the URL beats "".
         .or_else(|| url.clone())
@@ -402,6 +402,26 @@ mod tests {
         let channel = parse_fixture("empty.xml");
         assert!(channel.entries.is_empty());
         assert_eq!(channel.title.as_deref(), Some("Nothing Here Yet"));
+    }
+
+    #[test]
+    fn a_double_escaped_emoji_in_a_title_is_decoded() {
+        let channel = parse_fixture("entity-title.xml");
+        assert_eq!(channel.entries[0].title, "\u{1f4cc} Pinned post");
+    }
+
+    #[test]
+    fn real_world_double_escaped_titles_are_decoded() {
+        let channel = parse_fixture("niebezpiecznik-sample.xml");
+        assert_eq!(
+            channel.entries[0].title,
+            "\u{1f4cc} Jak nie dać się zhackować? Ruszamy w Polskę z kolejną edycją \
+             naszego kultowego wykładu"
+        );
+        assert_eq!(
+            channel.entries[1].title,
+            "AI do rozbierania kobiet \u{2014} takie reklamy latały po Facebooku"
+        );
     }
 
     #[test]

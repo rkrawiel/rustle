@@ -83,6 +83,62 @@ pub fn plain_text(sanitized_html: &str) -> String {
     decoded.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
+/// Decodes character references out of a plain-text field such as a title.
+///
+/// Titles are not HTML, so they are never run through `html()` -- but some feeds
+/// double-escape them anyway (most often to carry an emoji: the XML source has
+/// `&amp;#x1f4cc;`, which the XML parser correctly turns into the literal text
+/// `&#x1f4cc;`, one escaping layer short of the character it names). Left alone, that
+/// literal entity text is what readers see. Unrecognized or malformed references are left
+/// untouched rather than guessed at.
+pub fn decode_text(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut rest = text;
+
+    while let Some(start) = rest.find('&') {
+        out.push_str(&rest[..start]);
+        let tail = &rest[start + 1..];
+        match tail.find(';').filter(|&end| end > 0 && end <= 10) {
+            Some(end) => match decode_named_or_numeric(&tail[..end]) {
+                Some(decoded) => {
+                    out.push(decoded);
+                    rest = &tail[end + 1..];
+                }
+                None => {
+                    out.push('&');
+                    rest = tail;
+                }
+            },
+            None => {
+                out.push('&');
+                rest = tail;
+            }
+        }
+    }
+    out.push_str(rest);
+    out
+}
+
+/// One character reference, named or numeric, without its leading `&` or trailing `;`.
+fn decode_named_or_numeric(entity: &str) -> Option<char> {
+    match entity {
+        "amp" => return Some('&'),
+        "lt" => return Some('<'),
+        "gt" => return Some('>'),
+        "quot" => return Some('"'),
+        "apos" => return Some('\''),
+        "nbsp" => return Some('\u{a0}'),
+        _ => {}
+    }
+
+    let digits = entity.strip_prefix('#')?;
+    let code = match digits.strip_prefix('x').or_else(|| digits.strip_prefix('X')) {
+        Some(hex) => u32::from_str_radix(hex, 16).ok()?,
+        None => digits.parse::<u32>().ok()?,
+    };
+    char::from_u32(code)
+}
+
 /// The five predefined XML entities plus `&nbsp;`, which is all ammonia's output contains.
 fn decode_entities(text: &str) -> String {
     text.replace("&lt;", "<")
@@ -231,6 +287,28 @@ mod tests {
         assert_eq!(plain_text("<p>a &lt; b</p>"), "a < b");
         assert_eq!(plain_text("<p>&amp;lt;</p>"), "&lt;", "no double decoding");
         assert_eq!(plain_text("<p>a&nbsp;b</p>"), "a b");
+    }
+
+    #[test]
+    fn decode_text_turns_a_double_escaped_emoji_into_the_character() {
+        // The XML source had `&amp;#x1f4cc;`; the XML parser already turned that into
+        // this literal text, one decoding pass short of the pushpin it names.
+        assert_eq!(decode_text("&#x1f4cc; Pinned post"), "\u{1f4cc} Pinned post");
+        assert_eq!(decode_text("&#128081;"), "\u{1f451}");
+    }
+
+    #[test]
+    fn decode_text_handles_named_entities() {
+        assert_eq!(decode_text("Tom &amp; Jerry"), "Tom & Jerry");
+        assert_eq!(decode_text("a &lt; b &gt; c"), "a < b > c");
+    }
+
+    #[test]
+    fn decode_text_leaves_unknown_or_malformed_references_alone() {
+        assert_eq!(decode_text("R&D"), "R&D");
+        assert_eq!(decode_text("Fish & Chips"), "Fish & Chips");
+        assert_eq!(decode_text("&unknownentity;"), "&unknownentity;");
+        assert_eq!(decode_text("&#xzzzz;"), "&#xzzzz;");
     }
 
     #[test]

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Entity Title Example</title>
+  <id>urn:uuid:entity-title</id>
+  <updated>2026-09-30T08:00:00Z</updated>
+  <link rel="alternate" href="https://entity.example/" />
+  <entry>
+    <title>&amp;#x1f4cc; Pinned post</title>
+    <id>urn:uuid:entity-title-1</id>
+    <updated>2026-09-30T08:00:00Z</updated>
+    <link href="https://entity.example/first" />
+    <content type="html">&lt;p&gt;Body&lt;/p&gt;</content>
+  </entry>
+</feed>

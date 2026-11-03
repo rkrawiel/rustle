@@ -1,0 +1,32 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into entries (user_id, feed_id, guid_hash, title, url, author,\n                                  content, content_text, content_hash, published_at)\n             values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)\n             on conflict (feed_id, guid_hash) do update\n               set title = excluded.title,\n                   url = excluded.url,\n                   author = excluded.author,\n                   content = excluded.content,\n                   content_text = excluded.content_text,\n                   content_hash = excluded.content_hash\n               where entries.content_hash <> excluded.content_hash\n                  or entries.title <> excluded.title\n             returning (xmax = 0) as \"inserted!\"",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "inserted!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Bytea",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Bytea",
+        "Timestamptz"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "acd3dfedd25ab8ac87bff53937dc44a569e4e6efffe49b32abc6c3c16179aac9"
+}

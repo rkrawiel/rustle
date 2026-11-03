@@ -162,9 +162,13 @@ async fn store_entries(
         // `xmax = 0` is the standard Postgres trick for telling an INSERT apart from an
         // ON CONFLICT UPDATE in a single statement.
         //
-        // The conflict clause only writes when `content_hash` differs. Some feeds rewrite
-        // their content on every fetch — an ad token, a rendered timestamp — and treating
-        // that as a change would reset read state over and over.
+        // The conflict clause writes when `content_hash` differs, or when only the title
+        // changed. Some feeds rewrite their content on every fetch — an ad token, a
+        // rendered timestamp — and treating that as a change would cause needless writes
+        // on every poll; a title fix (or a publisher's genuine rename) is rare enough,
+        // and worth applying, that it is checked for directly rather than folded into the
+        // content hash. Neither branch touches `read_at`/`starred_at`, so this never
+        // resets a reader's read state.
         let row = sqlx::query!(
             "insert into entries (user_id, feed_id, guid_hash, title, url, author,
                                   content, content_text, content_hash, published_at)
@@ -177,6 +181,7 @@ async fn store_entries(
                    content_text = excluded.content_text,
                    content_hash = excluded.content_hash
                where entries.content_hash <> excluded.content_hash
+                  or entries.title <> excluded.title
              returning (xmax = 0) as \"inserted!\"",
             feed.user_id,
             feed.id,

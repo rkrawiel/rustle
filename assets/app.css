@@ -213,7 +213,7 @@ main {
   height: 3px;
   background: var(--accent);
   border: 0;
-  margin: 1.75rem 0 0;
+  margin: 1.75rem 0;
 }
 
 .prose {

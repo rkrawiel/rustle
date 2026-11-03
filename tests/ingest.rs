@@ -281,6 +281,102 @@ async fn an_edited_entry_is_updated_in_place(pool: PgPool) {
     assert!(text.contains("Corrected"), "{text}");
 }
 
+#[sqlx::test]
+async fn a_new_entry_published_since_subscribing_is_picked_up_on_the_next_poll(pool: PgPool) {
+    // Mirrors FeedBurner's own response shape for this exact bug report: no `ETag`, only
+    // `Last-Modified`, and a `Cache-Control` that explicitly forbids caching
+    // (`no-store, max-age=0`) rather than omitting the header.
+    let server = MockServer::start().await;
+    let headers = |body: String| {
+        ResponseTemplate::new(200)
+            .set_body_string(body)
+            .insert_header("last-modified", "Sat, 3 Oct 2026 20:55:11 GMT")
+            .insert_header("cache-control", "no-cache, no-store, max-age=0, must-revalidate")
+    };
+
+    Mock::given(method("GET"))
+        .and(path("/v1"))
+        .respond_with(headers(rss_feed(
+            &server.uri(),
+            &[("a", "First post", "Body.")],
+        )))
+        .mount(&server)
+        .await;
+    Mock::given(method("GET"))
+        .and(path("/v2"))
+        .respond_with(headers(rss_feed(
+            &server.uri(),
+            &[("a", "First post", "Body."), ("b", "Second post", "New.")],
+        )))
+        .mount(&server)
+        .await;
+
+    let feed = subscribed(&pool, &format!("{}/v1", server.uri())).await;
+    let first = ingest::refresh_feed(&pool, &fetcher(), &feed)
+        .await
+        .unwrap();
+    assert_eq!(first.added, 1);
+
+    // The site published a second post; nothing about the first post changed.
+    sqlx::query("update feeds set feed_url = $1 where id = 1")
+        .bind(format!("{}/v2", server.uri()))
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let second = ingest::refresh_feed(&pool, &fetcher(), &reload(&pool).await)
+        .await
+        .unwrap();
+    assert_eq!(second.added, 1, "the new post must be inserted");
+    assert_eq!(second.unchanged, 1, "the first post is untouched");
+
+    let count: i64 = sqlx::query_scalar("select count(*) from entries")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(count, 2);
+
+    let after = reload(&pool).await;
+    assert!(after.last_error.is_none());
+    assert_eq!(after.failure_count, 0);
+}
+
+#[sqlx::test]
+async fn a_title_fix_is_applied_on_repoll_even_when_the_content_has_not_changed(pool: PgPool) {
+    // Stands in for a title stored before `sanitize::decode_text` existed: the feed's body
+    // never changes, so `content_hash` alone would never let a corrected title through.
+    let server = MockServer::start().await;
+    let body = rss_feed(&server.uri(), &[("a", "First post", "Same.")]);
+
+    Mock::given(method("GET"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(body))
+        .mount(&server)
+        .await;
+
+    let feed = subscribed(&pool, &format!("{}/feed.xml", server.uri())).await;
+    ingest::refresh_feed(&pool, &fetcher(), &feed)
+        .await
+        .unwrap();
+
+    sqlx::query("update entries set title = '&#8212; stale title', read_at = now()")
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let counts = ingest::refresh_feed(&pool, &fetcher(), &reload(&pool).await)
+        .await
+        .unwrap();
+    assert_eq!(counts.updated, 1, "a title-only difference must still write");
+
+    let (title, read_at): (String, Option<chrono::DateTime<chrono::Utc>>) =
+        sqlx::query_as("select title, read_at from entries")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(title, "First post");
+    assert!(read_at.is_some(), "fixing the title must not reset read state");
+}
+
 // ---------------------------------------------------------------- rate limiting
 
 #[sqlx::test]
